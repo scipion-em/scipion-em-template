@@ -1,1 +1,2 @@
-1-October-2019 - Just a python package
+1-October-2019 -
+Just a python package, should work with "scipion installp -p /home/you/scipion-em-template/ --devel
