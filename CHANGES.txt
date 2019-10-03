@@ -1,7 +1,7 @@
-1-October-2019 -
+1-October-2019 - (tagged with 1.skeleton)
     Just a python package, should work with "scipion installp -p /home/you/scipion-em-template/ --devel
 
-3-October-2019 -
+3-October-2019 - (tagged with 2.scipion-plugin-skeleton)
     myplugin/__init__.py added, with its own Plugin instance and the registering call:
 
     Inspecting the plugin should work:
@@ -18,3 +18,6 @@
     >>> wizards:  missing
     >>> viewers:  missing
     >>> tests:  missing
+
+3 October-2019 - 12:40 - (tagged with 3.basic-hello-world-protocol)
+    protocols.py added with a functional helloworld protocol
