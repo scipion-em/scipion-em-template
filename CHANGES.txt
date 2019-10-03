@@ -21,3 +21,8 @@
 
 3 October-2019 - 12:40 - (tagged with 3.basic-hello-world-protocol)
     protocols.py added with a functional helloworld protocol
+
+3 October-2019 - 13:45 - (tagged with 4.icon-protocols.conf-reference)
+    Icon for the plugin added (icon.png)
+    protocols.conf added so protocol is shown on the left tree
+    reference added

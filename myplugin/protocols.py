@@ -47,5 +47,5 @@ class MyPluginPrefixHelloWorld(Protocol):
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
         """ Summarize what the protocol has done"""
-        summary = ["This protocol just say Hello world!"]
+        summary = ["This protocol just says Hello world!"]
         return summary
