@@ -34,7 +34,7 @@ setup(
     keywords='scipion cryoem imageprocessing scipion-2.0',  # Optional
     packages=find_packages(),
     install_requires=[requirements],
-    #package_data={  # Optional
-    #   'myplugin': ['icon.png', 'protocols.conf'],
-    #}
+    package_data={  # Optional
+       'myplugin': ['icon.png', 'protocols.conf'],
+    }
 )
