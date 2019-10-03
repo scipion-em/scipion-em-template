@@ -1,2 +1,21 @@
 1-October-2019 -
 Just a python package, should work with "scipion installp -p /home/you/scipion-em-template/ --devel
+
+3-October-2019 -
+myplugin/__init__.py added, with its own Plugin instance and the registering call:
+
+Inspecting the plugin should work:
+
+scipion python pyworkflow/install/inspect-plugins.py myplugin
+
+Scipion v2.0 (2019-04-23) Diocletian
+
+>>>>> python  "pyworkflow/install/inspect-plugins.py" "myplugin"
+Plugin: myplugin
+>>> constants:  missing
+>>> convert:  missing
+>>> protocols:  missing
+>>> wizards:  missing
+>>> viewers:  missing
+>>> tests:  missing
+
