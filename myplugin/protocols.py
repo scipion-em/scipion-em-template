@@ -23,7 +23,7 @@
 # *  e-mail address 'you@yourinstitution.email'
 # *
 # **************************************************************************
-
+from pyworkflow.object import Integer
 from pyworkflow.protocol import Protocol, params
 from pyworkflow.utils.properties import Message
 
@@ -58,6 +58,7 @@ class MyPluginPrefixHelloWorld(Protocol):
     def _insertAllSteps(self):
         # Insert processing steps
         self._insertFunctionStep('greetingsStep')
+        self._insertFunctionStep('createOutputStep')
 
     def greetingsStep(self):
         # say what the parameter says!!
@@ -65,8 +66,17 @@ class MyPluginPrefixHelloWorld(Protocol):
         for time in range(0, self.times.get()):
             print(self.message)
 
+    def createOutputStep(self):
+        # register how many times the message has been printed
+        timesPrinted = Integer(self.times.get())
+        self._defineOutputs(count=timesPrinted)
+
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
         """ Summarize what the protocol has done"""
-        summary = ["This protocol just says Hello world!"]
+        summary = []
+
+        if self.isFinished():
+
+            summary.append("This protocol has printed *%s* %i times." % (self.message, self.times))
         return summary

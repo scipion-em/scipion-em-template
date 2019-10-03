@@ -31,3 +31,6 @@
     Hello world protocol has 2 parameter:
         1.- message: to enter the message to print
         2.- times: to print them message that number ot times.
+
+3 October-2019 - 15:06 - (tagged with 6.generating-output)
+    The Hello world protocols generates a scalar output
