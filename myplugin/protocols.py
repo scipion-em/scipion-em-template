@@ -24,7 +24,9 @@
 # *
 # **************************************************************************
 
-from pyworkflow.protocol import Protocol
+from pyworkflow.protocol import Protocol, params
+from pyworkflow.utils.properties import Message
+
 """
 Describe your python module here:
 This module will provide the traditional Hello world example
@@ -35,14 +37,33 @@ class MyPluginPrefixHelloWorld(Protocol):
      IMPORTANT: Classes names should be unique, better prefix them"""
     _label = 'Hello world'
 
+    # -------------------------- DEFINE param functions ----------------------
+    def _defineParams(self, form):
+        """ Define the input parameters that will be used.
+        Params:
+            form: this is the form to be populated with sections and params.
+        """
+        # You need a params to belong to a section:
+        form.addSection(label=Message.LABEL_INPUT)
+        form.addParam('message', params.StringParam,
+                      default='Hello world!',
+                      label='Message', important=True,
+                      help='What will be printed in the console.')
+
+        form.addParam('times', params.IntParam,
+                      default=10,
+                      label='Times', important=True,
+                      help='Times the message will be printed.')
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
         self._insertFunctionStep('greetingsStep')
 
     def greetingsStep(self):
-        # say something!!
-        print("Hello world!")
+        # say what the parameter says!!
+
+        for time in range(0, self.times.get()):
+            print(self.message)
 
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
