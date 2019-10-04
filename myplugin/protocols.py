@@ -54,6 +54,13 @@ class MyPluginPrefixHelloWorld(Protocol):
                       default=10,
                       label='Times', important=True,
                       help='Times the message will be printed.')
+
+        form.addParam('previousCount', params.IntParam,
+                      default=0,
+                      allowsNull=True,
+                      label='Previous count',
+                      help='Previous count of printed messages',
+                      allowsPointers=True)
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
@@ -68,7 +75,8 @@ class MyPluginPrefixHelloWorld(Protocol):
 
     def createOutputStep(self):
         # register how many times the message has been printed
-        timesPrinted = Integer(self.times.get())
+        # Now count will be an accumulated value
+        timesPrinted = Integer(self.times.get() + self.previousCount.get())
         self._defineOutputs(count=timesPrinted)
 
     # --------------------------- INFO functions -----------------------------------
@@ -80,3 +88,14 @@ class MyPluginPrefixHelloWorld(Protocol):
 
             summary.append("This protocol has printed *%s* %i times." % (self.message, self.times))
         return summary
+
+    def _methods(self):
+        methods = []
+
+        if self.isFinished():
+            methods.append("%s has been printed in this run %i times." % (self.message, self.times))
+            if self.previousCount.hasPointer():
+                methods.append("Accumulated count from previous runs were %i."
+                               " In total, %s messages has been printed."
+                               % (self.previousCount, self.count))
+        return methods

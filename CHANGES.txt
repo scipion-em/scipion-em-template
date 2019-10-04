@@ -33,4 +33,7 @@
         2.- times: to print them message that number ot times.
 
 3 October-2019 - 15:06 - (tagged with 6.generating-output)
-    The Hello world protocols generates a scalar output
+    The Hello world protocol generates a scalar output
+
+3 October-2019 - 15:32 - (tagged with 7.connecting-protocols)
+    Now, Hello world protocol, can receive the output of another protocol.
