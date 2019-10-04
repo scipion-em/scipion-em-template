@@ -36,4 +36,7 @@
     The Hello world protocol generates a scalar output
 
 3 October-2019 - 15:32 - (tagged with 7.connecting-protocols)
-    Now, Hello world protocol, can receive the output of another protocol.
+    Now, Hello world protocol, can receive the output of another protocol
+
+4 October-2019 - 12:22 - (tagged with 8.adding-a-wizard)
+    The wizzard will suggest some common greetings in different lenguages
