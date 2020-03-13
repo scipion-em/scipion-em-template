@@ -10,9 +10,9 @@ Setup
 
 - **Install this plugin in devel mode:**
 
-Using the command line:
+Using the command line (be sure to be in scipion3 environment):
 
 .. code-block::
 
-    scipion installp -p local/path/to/scipion-em-template --devel
+    pip install -e local/path/to/scipion-em-template
 

@@ -24,12 +24,12 @@
 # *
 # **************************************************************************
 
-import pyworkflow.em
+from pwem import Plugin
 
 _logo = "icon.png"
 _references = ['you2019']
 
-class Plugin(pyworkflow.em.Plugin):
+class Plugin(Plugin):
     pass
 
-pyworkflow.em.Domain.registerPlugin(__name__)
+
