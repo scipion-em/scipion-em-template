@@ -24,12 +24,10 @@
 # *  e-mail address 'you@yourinstitution.email'
 # *
 # **************************************************************************
-
-from pyworkflow.em import ListTreeProviderString, String
-import pyworkflow.gui.dialog as dialog
-
-from myplugin.protocols import MyPluginPrefixHelloWorld
+from pyworkflow.gui import ListTreeProviderString, dialog
+from pyworkflow.object import String
 from pyworkflow.wizard import Wizard
+from myplugin.protocols import MyPluginPrefixHelloWorld
 
 
 class MyPluginPrefixHelloWorldWizard(Wizard):

@@ -24,14 +24,15 @@
 # *  e-mail address 'you@yourinstitution.email'
 # *
 # **************************************************************************
-from pyworkflow.object import Integer
-from pyworkflow.protocol import Protocol, params
-from pyworkflow.utils.properties import Message
+
 
 """
 Describe your python module here:
 This module will provide the traditional Hello world example
 """
+from pyworkflow.protocol import Protocol, params, Integer
+from pyworkflow.utils import Message
+
 
 class MyPluginPrefixHelloWorld(Protocol):
     """ This protocol will print hello world in the console
