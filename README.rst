@@ -11,31 +11,31 @@ Steps to adapt this plugin
 IMPORTANT: To simplify the instructions all the commands would refer to an hypothetical new plugin name called "coolem".
 Note that you must replace "coolem" by your plugin name.
 
-** Clone it:**
+**Clone it:**
 
 .. code-block::
 
     git clone git@github.com:scipion-em/scipion-em-template.git scipion-em-*coolem*
 
-** Reset the git repo **
+**Reset the git repo**
 
 .. code-block::
     cd scipion-em-coolem
     rm -rf .git
     git init
 
-** Empty CHANGES.txt **
+**Empty CHANGES.txt**
 
 .. code-block::
 
     rm CHANGES.txt && touch CHANGES.txt
 
-** Rename "myplugin" to coolem (IDE might help here)**
+**Rename "myplugin" to coolem (IDE might help here)**
 
 .. code-block::
     mv myplugin coolem
 
-** Tidy up imports **
+**Tidy up imports**
 
 Tip: Search in your IDE for "myplugin" and replace by *"coolem"*
 
@@ -66,7 +66,7 @@ setup.py:
         'pyworkflow.plugin': 'coolem = coolem'
     }
 
-** Install the plugin in devel mode **
+**Install the plugin in devel mode**
 
 .. code-block::
     scipion3 installp -p /home/me/scipion-em-coolem --devel
@@ -76,9 +76,9 @@ TIP: If installation fails, you can access pip options like:
 .. code-block::
     scipion3 python -m pip ... (list, install, uninstall)
 
-** Customize it **
+**Customize it**
     replace icon.png with your logo.
     update the bibtex.py with your reference.
 
-** Get rid of this content and keep the readme informative **
+**Get rid of this content and keep the readme informative**
 
