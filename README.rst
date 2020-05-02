@@ -20,6 +20,7 @@ Note that you must replace "coolem" by your plugin name.
 **Reset the git repo**
 
 .. code-block::
+
     cd scipion-em-coolem
     rm -rf .git
     git init
@@ -33,6 +34,7 @@ Note that you must replace "coolem" by your plugin name.
 **Rename "myplugin" to coolem (IDE might help here)**
 
 .. code-block::
+
     mv myplugin coolem
 
 **Tidy up imports**
@@ -69,11 +71,13 @@ setup.py:
 **Install the plugin in devel mode**
 
 .. code-block::
+
     scipion3 installp -p /home/me/scipion-em-coolem --devel
 
 TIP: If installation fails, you can access pip options like:
 
 .. code-block::
+
     scipion3 python -m pip ... (list, install, uninstall)
 
 **Customize it**
