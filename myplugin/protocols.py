@@ -63,6 +63,7 @@ class MyPluginPrefixHelloWorld(Protocol):
                       label='Previous count',
                       help='Previous count of printed messages',
                       allowsPointers=True)
+
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
@@ -87,7 +88,6 @@ class MyPluginPrefixHelloWorld(Protocol):
         summary = []
 
         if self.isFinished():
-
             summary.append("This protocol has printed *%s* %i times." % (self.message, self.times))
         return summary
 

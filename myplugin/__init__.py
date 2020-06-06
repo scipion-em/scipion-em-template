@@ -24,12 +24,11 @@
 # *
 # **************************************************************************
 
-from pwem import Plugin
+import pwem
 
 _logo = "icon.png"
 _references = ['you2019']
 
-class Plugin(Plugin):
+
+class Plugin(pwem.Plugin):
     pass
-
-
