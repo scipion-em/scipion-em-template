@@ -59,12 +59,10 @@ class MyPluginPrefixHelloWorld(Protocol):
                       label='Operand 1', important=True,
                       help='First operand considered in the selected operation.')
 
-        form.addParam('previousCount', params.IntParam,
-                      default=0,
-                      allowsNull=True,
-                      label='Previous count',
-                      help='Previous count of printed messages',
-                      allowsPointers=True)
+        form.addParam('operand2', params.IntParam,
+                      default=1,
+                      label='Operand 2', important=True,
+                      help='Second operand considered in the selected operation.')
 
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
