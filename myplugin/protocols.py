@@ -49,10 +49,10 @@ class MyPluginPrefixHelloWorld(Protocol):
         """
         # You need a params to belong to a section:
         form.addSection(label=Message.LABEL_INPUT)
-        form.addParam('message', params.StringParam,
-                      default='Hello world!',
-                      label='Message', important=True,
-                      help='What will be printed in the console.')
+        form.addParam('operation', params.StringParam,
+                      default='Sum',
+                      label='Operation', important=True,
+                      help='Operation which will be applied.')
 
         form.addParam('times', params.IntParam,
                       default=10,
