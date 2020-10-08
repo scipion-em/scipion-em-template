@@ -32,7 +32,7 @@ from myplugin.protocols import MyPluginPrefixHelloWorld
 
 class MyPluginPrefixHelloWorldWizard(Wizard):
     # Dictionary to target protocol parameters
-    _targets = [(MyPluginPrefixHelloWorld, ['message'])]
+    _targets = [(MyPluginPrefixHelloWorld, ['operation'])]
 
     def show(self, form, *params):
 
@@ -50,4 +50,4 @@ class MyPluginPrefixHelloWorldWizard(Wizard):
                                 "Select one of the operations")
 
         # Set the chosen value back to the form
-        form.setVar('message', dlg.values[0].get())
+        form.setVar('operation', dlg.values[0].get())
