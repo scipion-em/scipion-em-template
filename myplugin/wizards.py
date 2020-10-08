@@ -37,11 +37,10 @@ class MyPluginPrefixHelloWorldWizard(Wizard):
     def show(self, form, *params):
 
         # This are the greetings:
-        greetings = [String("Hello world"), String("Hola mundo"),
-                     String("Bonjour le monde"), String("Hallo Welt"),
-                     String("Kon'nichiwa sekai"), String("Nǐ hǎo, shìjiè"),
-                     String("Ciao mondo"), String("Hallo Wereld"),
-                     String("Privet, mir")]
+        greetings = [String('Sum'),
+                     String('Substract'),
+                     String('Multiply'),
+                     String('Divide')]
 
         # Get a data provider from the greetings to be used in the tree (dialog)
         provider = ListTreeProviderString(greetings)
