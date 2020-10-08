@@ -36,18 +36,18 @@ class MyPluginPrefixHelloWorldWizard(Wizard):
 
     def show(self, form, *params):
 
-        # This are the greetings:
-        greetings = [String('Sum'),
+        # This are the operations:
+        operations = [String('Sum'),
                      String('Substract'),
                      String('Multiply'),
                      String('Divide')]
 
-        # Get a data provider from the greetings to be used in the tree (dialog)
-        provider = ListTreeProviderString(greetings)
+        # Get a data provider from the operations to be used in the tree (dialog)
+        provider = ListTreeProviderString(operations)
 
         # Show the dialog
-        dlg = dialog.ListDialog(form.root, "Greetings from the world", provider,
-                                "Select one of the greetings)")
+        dlg = dialog.ListDialog(form.root, "My calculator operations", provider,
+                                "Select one of the operations")
 
         # Set the chosen value back to the form
         form.setVar('message', dlg.values[0].get())
