@@ -67,20 +67,41 @@ class MyPluginPrefixHelloWorld(Protocol):
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
-        self._insertFunctionStep('greetingsStep')
+        self._insertFunctionStep('calculateStep')
         self._insertFunctionStep('createOutputStep')
 
-    def greetingsStep(self):
-        # say what the parameter says!!
+    def calculateStep(self):
+        # Get value introduced by the user for Operand 1
+        operand1 = self.operand1.get()
+        # Get value introduced by the user for Operand 2
+        operand2 = self.operand2.get()
+        # Get value selected by the user for Operation
+        operation = self.operation.get()
+        # Type message body to be printed
+        msg = '{operation} of {operand1} {prep} {operand2} is {result}'
+        # Implement the four possible cases
+        if operation == 'Sum':
+            prep = 'plus'
+            result = operand1 + operand2
+        elif operation == 'Substract':
+            prep = 'minus'
+            result = operand1 - operand2
+        elif operation == 'Multiply':
+            prep = 'by'
+            result = operand1 * operand2
+        else:
+            prep = 'by'
+            result = operand1 / operand2
+        # Print the result on the terminal by replacing the variables
+        # between {} with the local values they have
+        print(msg.format(**locals()))
+        self.result = result
 
-        for time in range(0, self.times.get()):
-            print(self.message)
-
-    def createOutputStep(self):
-        # register how many times the message has been printed
-        # Now count will be an accumulated value
-        timesPrinted = Integer(self.times.get() + self.previousCount.get())
-        self._defineOutputs(count=timesPrinted)
+    # def createOutputStep(self):
+    #     # register how many times the message has been printed
+    #     # Now count will be an accumulated value
+    #     timesPrinted = Integer(self.times.get() + self.previousCount.get())
+    #     self._defineOutputs(result=self.result)
 
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
