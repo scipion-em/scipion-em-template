@@ -54,10 +54,10 @@ class MyPluginPrefixHelloWorld(Protocol):
                       label='Operation', important=True,
                       help='Operation which will be applied.')
 
-        form.addParam('times', params.IntParam,
-                      default=10,
-                      label='Times', important=True,
-                      help='Times the message will be printed.')
+        form.addParam('operand1', params.IntParam,
+                      default=1,
+                      label='Operand 1', important=True,
+                      help='First operand considered in the selected operation.')
 
         form.addParam('previousCount', params.IntParam,
                       default=0,
