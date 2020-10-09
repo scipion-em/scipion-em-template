@@ -40,6 +40,7 @@ class MyPluginPrefixHelloWorld(Protocol):
     IMPORTANT: Classes names should be unique, better prefix them
     """
     _label = 'Hello world'
+    _result = None
 
     # -------------------------- DEFINE param functions ----------------------
     def _defineParams(self, form):
@@ -54,12 +55,12 @@ class MyPluginPrefixHelloWorld(Protocol):
                       label='Operation', important=True,
                       help='Operation which will be applied.')
 
-        form.addParam('operand1', params.IntParam,
+        form.addParam('operand1', params.FloatParam,
                       default=1,
                       label='Operand 1', important=True,
                       help='First operand considered in the selected operation.')
 
-        form.addParam('operand2', params.IntParam,
+        form.addParam('operand2', params.FloatParam,
                       default=1,
                       label='Operand 2', important=True,
                       help='Second operand considered in the selected operation.')
@@ -77,48 +78,40 @@ class MyPluginPrefixHelloWorld(Protocol):
         operand2 = self.operand2.get()
         # Get value selected by the user for Operation
         operation = self.operation.get()
-        # Type message body to be printed
-        msg = '{operation} of {operand1} {prep} {operand2} is {result}'
-        # Implement the four possible cases
+        # Implement the four possible cases, storing the result as an attribute of the protocol
         if operation == 'Sum':
-            prep = 'plus'
-            result = operand1 + operand2
+            self._result = operand1 + operand2
         elif operation == 'Substract':
-            prep = 'minus'
-            result = operand1 - operand2
+            self._result = operand1 - operand2
         elif operation == 'Multiply':
-            prep = 'by'
-            result = operand1 * operand2
+            self._result = operand1 * operand2
         else:
-            prep = 'by'
-            result = operand1 / operand2
-        # Print the result on the terminal by replacing the variables
-        # between {} with the local values they have
-        print(msg.format(**locals()))
-        self.result = result
+            self._result = operand1 / operand2
 
-    # def createOutputStep(self):
-    #     # register how many times the message has been printed
-    #     # Now count will be an accumulated value
-    #     timesPrinted = Integer(self.times.get() + self.previousCount.get())
-    #     self._defineOutputs(result=self.result)
+    def createOutputStep(self):
+        # register the operation result
+        self._defineOutputs(result=params.Float(self._result))
 
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
         """ Summarize what the protocol has done"""
         summary = []
-
         if self.isFinished():
-            summary.append("This protocol has printed *%s* %i times." % (self.message, self.times))
+            summary.append(('Operation --> %s\n' +
+                            'Operand 1 --> %1.2f\n' +
+                            'Operand 2 --> %1.2f\n' +
+                            'RESULT ==> %1.2f\n') %
+                            (self.operation.get(), self.operand1.get(),
+                             self.operand2.get(), self.result))
         return summary
 
-    def _methods(self):
-        methods = []
-
-        if self.isFinished():
-            methods.append("%s has been printed in this run %i times." % (self.message, self.times))
-            if self.previousCount.hasPointer():
-                methods.append("Accumulated count from previous runs were %i."
-                               " In total, %s messages has been printed."
-                               % (self.previousCount, self.count))
-        return methods
+    # def _methods(self):
+    #     methods = []
+    #
+    #     if self.isFinished():
+    #         methods.append("%s has been printed in this run %i times." % (self.message, self.times))
+    #         if self.previousCount.hasPointer():
+    #             methods.append("Accumulated count from previous runs were %i."
+    #                            " In total, %s messages has been printed."
+    #                            % (self.previousCount, self.count))
+    #     return methods
