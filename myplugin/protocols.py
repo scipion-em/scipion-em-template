@@ -54,7 +54,7 @@ class MyPluginPrefixHelloWorld(Protocol):
                       label='Operation', important=True,
                       help='Operation which will be applied.')
 
-        form.addParam('operand1', params.IntParam,
+        form.addParam('operand1', params.FloatParam,
                       default=1,
                       label='Operand 1', important=True,
                       help='First operand considered in the selected operation.')
