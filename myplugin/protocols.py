@@ -35,8 +35,10 @@ from pyworkflow.utils import Message
 
 
 class MyPluginPrefixHelloWorld(Protocol):
-    """ This protocol will print hello world in the console
-     IMPORTANT: Classes names should be unique, better prefix them"""
+    """
+    This protocol will print hello world in the console
+    IMPORTANT: Classes names should be unique, better prefix them
+    """
     _label = 'Hello world'
 
     # -------------------------- DEFINE param functions ----------------------
