@@ -37,6 +37,8 @@ from pwem.emlib.image import ImageHandler
 from pwem.objects import Volume
 from pwem.protocols.protocol import EMProtocol
 
+from xmipp3 import Plugin as xmipp3Plugin
+
 class MyPluginSubtractVolume(EMProtocol):
     """
     This protocol performs the operation V1-V2 between volumes
@@ -67,7 +69,7 @@ class MyPluginSubtractVolume(EMProtocol):
         fnVol2 = ImageHandler.locationToXmipp(self.V2.get())
         fnOut = self._getPath("diff.mrc")
         args = "-i %s --minus %s -o %s"%(fnVol1, fnVol2, fnOut)
-        self.runJob("xmipp_image_operate",args)
+        xmipp3Plugin.runXmippProgram("xmipp_image_operate",args)
 
     def createOutputStep(self):
         fnOut = self._getPath('diff.mrc')
