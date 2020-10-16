@@ -15,7 +15,7 @@ Note that you must replace "coolem" by your plugin name.
 
 .. code-block::
 
-    git clone git@github.com:scipion-em/scipion-em-template.git scipion-em-coolem
+    git clone https://github.com/scipion-em/scipion-em-template.git scipion-em-coolem
 
 **Reset the git repo**
 
