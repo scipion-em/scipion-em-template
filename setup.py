@@ -28,7 +28,7 @@ setup(
     version='0.1',  # Required
     description='Scipion plugin template.',  # Required
     long_description=long_description,  # Optional
-    url='https://github.com/scipion-em/scipion-em-template',  # Optional
+    url='https://github.com/scipion-em/scipion-em-myplugin',  # Optional
     author='you',  # Optional
     author_email='you@yourinstitution.email',  # Optional
     keywords='scipion cryoem imageprocessing scipion-3.0',  # Optional

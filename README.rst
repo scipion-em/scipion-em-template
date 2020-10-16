@@ -39,14 +39,21 @@ Note that you must replace "coolem" by your plugin name.
 
 **Tidy up imports**
 
-Tip: Search in your IDE for "myplugin" and replace by *"coolem"*
+Tip 1: IDE refactrization should rename at once the classes and the imports
+Tip 2: Search in your IDE for "myplugin" and replace by *"coolem"*
 
-coolem/protocols.py:
- rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
+coolem/protocols/protocol_hello_world.py:
+ class MyPluginPrefixHelloWorld --> class CoolemPrefixHelloWorld
 
-coolem/wizards.py:
- rename MyPluginPrefixHelloWorldWizard --> CoolemPrefixHelloWorldWizard
- Adapt imports
+coolem/protocol/__init__.py:
+ from .protocol_hello_world import MyPluginPrefixHelloWorld --> from .protocol_hello_world import CoolemPrefixHelloWorld
+
+coolem/wizards/wizard_hello_world.py:
+ _targets = [(MyPluginPrefixHelloWorld, ['message'])]  -->     _targets = [(CoolemPrefixHelloWorld, ['message'])]
+ class MyPluginPrefixHelloWorldWizard --> class CoolemPrefixHelloWorldWizard
+
+coolem/wizards/__init__.py:
+ from .wizard_hello_world import MyPluginPrefixHelloWorldWizard  --> from .wizard_hello_world import CoolemPrefixHelloWorldWizard
 
 protcocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
 
