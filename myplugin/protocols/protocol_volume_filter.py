@@ -36,6 +36,7 @@ from pyworkflow.utils import Message
 from pwem.emlib.image import ImageHandler
 from pwem.objects import Volume
 from pwem.protocols.protocol import EMProtocol
+from xmipp3 import Plugin as xmipp3Plugin
 
 class MyPluginFilterVolume(EMProtocol):
     """
@@ -99,7 +100,7 @@ class MyPluginFilterVolume(EMProtocol):
             Ts = vol.getSamplingRate()
             wlp = Ts/self.cutoffResolution.get()
             args += "--fourier low_pass %f %f" % (wlp,self.transBandwidth)
-        self.runJob("xmipp_transform_filter",args)
+        xmipp3Plugin.runXmippProgram("xmipp_transform_filter",args)
 
     def createOutputStep(self):
         fnVol = self._getPath('filteredVolume.mrc')
