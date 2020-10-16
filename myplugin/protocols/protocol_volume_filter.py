@@ -134,6 +134,7 @@ class MyPluginFilterVolume(EMProtocol):
                 methodStr += "raised cosine with a maximum resolution of %f A and transition bandwidth of %f (rad/vox)" %\
                               (self.cutoffResolution, self.transBandwidth)
             methods.append(methodStr)
+            methodStr+=" The volume %s was created."%(self.getObjectTag('outputVolume'))
         return methods
 
     def _citations(self):
