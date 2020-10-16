@@ -24,3 +24,4 @@
 
 from .protocol_hello_world import MyPluginPrefixHelloWorld
 from .protocol_volume_filter import MyPluginFilterVolume
+from .protocol_volume_difference import MyPluginSubtractVolume
