@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
 # **************************************************************************
 # *
-# * Authors:     you (you@yourinstitution.email)
-# *
-# * your institution
+# * Authors:   COS Sorzano (Biocomputing Unit, CNB, CSIC)  
 # *
 # * This program is free software; you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
@@ -25,26 +22,5 @@
 # *
 # **************************************************************************
 
-"""
-@article{you2019,
-title = "Title of your paper ",
-journal = "...",
-volume = "...",
-number = ".",
-pages = "1 - 6",
-year = "2019",
-issn = "0000-1111",
-doi = "http://dx.doi.org/xxxxx/xxxxx",
-url = "http://www.url",
-author = "you and your team",
-keywords = "Single particle analysis Tomography",
-}
-
-@book{Jain1989,
-        author = {Jain, A. K.},
-        journal = {Fundamentals of digital image processing},
-        year = {1989},
-        doi = {},
-}
-
-"""
+from .protocol_hello_world import MyPluginPrefixHelloWorld
+from .protocol_volume_filter import MyPluginFilterVolume
