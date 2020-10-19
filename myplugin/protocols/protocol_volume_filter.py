@@ -30,7 +30,7 @@
 This protocol filters a single volume
 """
 from os.path import exists
-from pyworkflow.protocol import Protocol, params
+from pyworkflow.protocol import params
 from pyworkflow.utils import Message
 
 from pwem.emlib.image import ImageHandler
