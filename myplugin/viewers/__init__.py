@@ -5,4 +5,4 @@
 # **************************************************************************
 
 from .viewer_volume_filter import MyPluginFilterVolumeViewer
-
+from .viewer_volume_difference import MyPluginVolumeDifferenceViewer
