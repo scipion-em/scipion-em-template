@@ -28,6 +28,7 @@ from pyworkflow.gui import ListTreeProviderString, dialog
 from pyworkflow.object import String
 from pyworkflow.wizard import Wizard
 from myplugin.protocols import MyPluginPrefixHelloWorld
+from .constants import SUM, SUBSTRACT, MULTIPLY, DIVIDE
 
 
 class MyPluginPrefixHelloWorldWizard(Wizard):
@@ -37,10 +38,10 @@ class MyPluginPrefixHelloWorldWizard(Wizard):
     def show(self, form, *params):
 
         # This are the operations:
-        operations = [String('Sum'),
-                     String('Substract'),
-                     String('Multiply'),
-                     String('Divide')]
+        operations = [String(SUM),
+                     String(SUBSTRACT),
+                     String(MULTIPLY),
+                     String(DIVIDE)]
 
         # Get a data provider from the operations to be used in the tree (dialog)
         provider = ListTreeProviderString(operations)

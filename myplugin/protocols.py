@@ -30,8 +30,9 @@
 Describe your python module here:
 This module will provide the traditional Hello world example
 """
-from pyworkflow.protocol import Protocol, params, Integer
+from pyworkflow.protocol import Protocol, params
 from pyworkflow.utils import Message
+from .constants import SUM, SUBSTRACT, MULTIPLY, DIVIDE
 
 
 class MyPluginPrefixHelloWorld(Protocol):
@@ -51,7 +52,7 @@ class MyPluginPrefixHelloWorld(Protocol):
         # You need a params to belong to a section:
         form.addSection(label=Message.LABEL_INPUT)
         form.addParam('operation', params.StringParam,
-                      default='Sum',
+                      default=SUM,
                       label='Operation', important=True,
                       help='Operation which will be applied.')
 
@@ -79,11 +80,11 @@ class MyPluginPrefixHelloWorld(Protocol):
         # Get value selected by the user for Operation
         operation = self.operation.get()
         # Implement the four possible cases, storing the result as an attribute of the protocol
-        if operation == 'Sum':
+        if operation == SUM:
             self._result = operand1 + operand2
-        elif operation == 'Substract':
+        elif operation == SUBSTRACT:
             self._result = operand1 - operand2
-        elif operation == 'Multiply':
+        elif operation == MULTIPLY:
             self._result = operand1 * operand2
         else:
             self._result = operand1 / operand2
