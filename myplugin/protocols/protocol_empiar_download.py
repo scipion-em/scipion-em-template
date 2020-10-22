@@ -27,51 +27,92 @@
 
 import json
 import requests
+import ftplib
+import threading
+import os
 
-from pwem.protocols import EMProtocol
-from pyworkflow.protocol import params, Positive, String
+from pwem import SAMPLING_FROM_IMAGE
+from pwem.protocols import (ProtImportMovies,  ProtImportMicrographs)
+from pwem.protocols.protocol_import.micrographs import ProtImportMicBase
+from pyworkflow.protocol import (params, Positive, String, Boolean, Integer,
+                                 Float)
+import pyworkflow.utils as pwutils
 
 
-class EmpiarDownloader(EMProtocol):
+class EmpiarDownloader(ProtImportMovies, ProtImportMicrographs):
     """
     Download image sets from empiar
     """
-    _label = 'Empiar downloader'
+    _label = 'empiar downloader'
+    _outputClassName = 'SetOfMovies'
 
     # --------------- DEFINE param functions ---------------
     def _defineParams(self, form):
+        self._defineCommondParams()
         form.addSection(label='Entry')
-        form.addParam('entryID', params.StringParam,
+        form.addParam('entryID', params.StringParam, default='10200',
                       label='EMPIAR ID',
                       important=True,
+                      allowsNull=False,
                       help='EMPIAR entry ID')
-        form.addParam('downloadByTime', params.BooleanParam, default=False,
-                      label='Download by time?')
-        form.addParam('timeSleep', params.IntParam,
-                      condition='downloadByTime==True',
-                      label='Time Sleep',
-                      validators=[Positive],
-                      help='Time that the protocol will be running')
-        form.addParam('amountOfImages', params.IntParam,
-                      condition='downloadByTime==False',
-                      label='Amount of images to download',
-                      validators=[Positive],
-                      help='Amount of images to download from a specific set')
 
-        form.addParam('filesPath', params.PathParam, default=self._getExtraPath(),
-                      label="Download directory",
-                      help="Directory where the images will be downloaded.")
+        form.addParam('entryType', params.EnumParam, default=0,
+                      choices=['Movies', 'Micrographs'],
+                      label='Type of data')
+        form.addParam('filesPattern', params.StringParam, default='*.tif',
+                      label='Pattern',
+                      help="Pattern of the files to be imported.\n\n"
+                           "The pattern can contain standard wildcards such as\n"
+                           "*, ?, etc, or special ones like ### to mark some\n"
+                           "digits in the filename as ID.\n\n"
+                           "NOTE: wildcards and special characters "
+                           "('*', '?', '#', ':', '%') cannot appear in the "
+                           "actual path.")
 
+        form.addSection('Streaming')
+        form.addParam('timeout', params.IntParam,
+                      default=43200,
+                      label='Time Out',
+                      validators=[Positive],
+                      help='Time that the protocol will be running expressed in seconds')
+        form.addParam('fileTimeout', params.IntParam, default=20,
+                      label="File timeout (secs)",
+                      help="Interval of time (in seconds) after which, if a file has "
+                           "not changed, we consider it as a new file. \n")
+
+    def _defineCommondParams(self):
+        self.importFrom = Integer(self.IMPORT_FROM_FILES)
+        self.dataStreaming = Boolean(True)
+        self.haveDataBeenPhaseFlipped = Boolean(False)
+        self.inputIndividualFrames = Boolean(False)
+        self.blacklistSet = String(None)
+        self.blacklistDateFrom = String()
+        self.blacklistDateTo = String()
+        self.blacklistFile = String()
+        self.copyFiles = False
+        self.dataStreaming = Boolean(True)
+        self.samplingRateMode = Integer(SAMPLING_FROM_IMAGE)
+        self.samplingRate = Float(1.0)
+        self.voltage = Float(300.0)
+        self.sphericalAberration = Float(2.7)
+        self.amplitudeContrast = Float(0.1)
+        self.magnification = Integer(50000)
+        self.doseInitial = Float(0)
+        self.dosePerFrame = Float(None)
+        self.flag = False
+        self._store(self)
 
     # --------------- INSERT steps functions ----------------
 
     def _insertAllSteps(self):
-        self._downloadXmlFile()
-        self._downloadSetOfImages()
-
+        self._insertFunctionStep('_downloadXmlFile')
+        self._insertFunctionStep('importImages')
     # --------------- STEPS functions -----------------------
 
     def _downloadXmlFile(self):
+        """
+        Download file by file from a specific dataset from EMPIAR repository
+        """
         xmlFileName = self.entryID.get()
         empiarXmlUrl = 'https://www.ebi.ac.uk/pdbe/emdb/empiar/api/entry/'
         empiarXmlUrl += xmlFileName
@@ -87,28 +128,66 @@ class EmpiarDownloader(EMProtocol):
             self.releaseDate = String(content[empiarName]['release_date'])
             self.datasetSize = String(content[empiarName]['dataset_size'])
             self.empiarName = String(empiarName)
+            self.filesPath = String(self._getExtraPath())
+            self.dataFormat = String(content[empiarName]['data_format'])
+
+            if self.entryType.get() == 0:
+                self._outputClassName = 'SetOfMovies'
+            else:
+                self._outputClassName = 'SetOfMicrograph'
             self._store(self)
         except Exception as ex:
-            self.setFailed(msg="There was an error downloading the EMPIAR raw images !!!")
+            self.setFailed(msg="There was an error downloading the EMPIAR raw "
+                               "images !!!")
 
+    def importImages(self):
+        """
+        Import a set of images from EMPIAR repository
+        """
+        import time
+        threadImportImages = threading.Thread(name="loading_plugin",
+                                            target=self._downloadSetOfImages)
+        threadImportImages.start()
+        while not self.flag:
+            time.sleep(2)
+        self.importImagesStreamStep(self.filesPattern.get(), voltage=self.voltage,
+                                    sphericalAberration=self.sphericalAberration,
+                                    amplitudeContrast=self.amplitudeContrast,
+                                    magnification=self.magnification)
 
     def _downloadSetOfImages(self):
-        import time
-        time.sleep(5)
-        if not self.downloadByTime:
-            imagesToDownload = self.amountOfImages
-            for imageSet in self.imageSets:
-                if imagesToDownload > 0:
-                    noImages = int(imageSet['num_images_or_tilt_series'])
-                    directory = imageSet['directory']
-                    for i in range(noImages):
+        """
+        This method connect to EMPIAR repository and download a set of images
+        into a specific directory
+        """
+        # Connection information
+        server = 'ftp.ebi.ac.uk'
+        username = 'anonymous'
+        password = ''
 
-                        imagesToDownload -= 1
-                    print(imageSet)
-                else:
+        # Directory information
+        directory = '/empiar/world_availability/' + self.entryID.get() + '/data/Movies'
+
+        # Establish the connection
+        ftp = ftplib.FTP(server)
+        ftp.login(username, password)
+
+        # Change to the proper directory
+        ftp.cwd(directory)
+
+        # Loop through files and download each one individually into a specific
+        # directory
+        for filename in ftp.nlst():
+            fileAbsPath = os.path.join(self.filesPath.get(), filename)
+            if not os.path.exists(fileAbsPath):
+                fhandle = open(fileAbsPath, 'wb')
+                print(pwutils.yellowStr('Getting: ' + filename), flush=True)
+                ftp.retrbinary('RETR ' + filename, fhandle.write)
+                fhandle.close()
+                self.flag = True
+                if self.streamingHasFinished():
                     break
-
-        return
+        ftp.close()
 
     def _summary(self):
         summary = []
@@ -121,4 +200,15 @@ class EmpiarDownloader(EMProtocol):
             summary.append('Dataset Size: ' + str(self.datasetSize))
         return summary
 
+    def _validate(self):
+        errors = []
+        return errors
 
+    def setSamplingRate(self, movieSet):
+        ProtImportMicBase.setSamplingRate(self, movieSet)
+        acq = movieSet.getAcquisition()
+        acq.setDoseInitial(self.doseInitial.get())
+        acq.setDosePerFrame(None)
+
+    def getCopyOrLink(self):
+        return self.ignoreCopy
