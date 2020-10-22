@@ -26,17 +26,27 @@
 import pyworkflow.tests as pwtests
 from ..constants import SUM, SUBSTRACT, MULTIPLY, DIVIDE
 from ..protocols import MyPluginPrefixHelloWorld
-import math
 
 
 class TestProtocolMyCalculator(pwtests.BaseTest):
     #################################### AUX TEST METHODS #######################################
     @classmethod
     def setUpClass(cls):
+        # Set up for test project
         pwtests.setupTestProject(cls)
-        cls.op1 = 12
-        cls.op2 = math.pi
+        # Get test dataset, downloading it from remote if not locally present
+        ds = pwtests.DataSet.getDataSet('devCourse')
+        # Parse dataset to get the desired data for testing
+        cls.op1 = cls._getValueFromFile(ds.getFile('calculator/operand1'))
+        cls.op2 = cls._getValueFromFile(ds.getFile('calculator/operand2'))
+        # Set tolerance for operation result checking
         cls.tol = 1e-6
+
+    @staticmethod
+    def _getValueFromFile(file):
+        with open(file) as f:
+            operand = [float(x) for x in next(f).split()]  # read first line
+            return operand[0]  # Only one line with one element present for this test
 
     def _runCalculatorTest(self, operation):
         '''Base test for calculator tests'''

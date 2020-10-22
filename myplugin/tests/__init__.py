@@ -24,4 +24,10 @@
 # *
 # **************************************************************************
 
+from pyworkflow.tests import DataSet
 
+DataSet(name='devCourse', folder='devCourse',
+        files={
+            'op1': 'operand1',
+            'op2': 'operand2'
+        })
