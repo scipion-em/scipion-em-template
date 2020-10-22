@@ -28,88 +28,103 @@
 import json
 import requests
 import ftplib
-import threading
 import os
+import shutil
 
-from pwem import SAMPLING_FROM_IMAGE
-from pwem.protocols import (ProtImportMovies,  ProtImportMicrographs)
-from pwem.protocols.protocol_import.micrographs import ProtImportMicBase
-from pyworkflow.protocol import (params, Positive, String, Boolean, Integer,
-                                 Float)
+from pwem.objects import Movie, SetOfMovies, Float
+from pwem.protocols import EMProtocol
+from pyworkflow.protocol import (params, Positive, String, STATUS_NEW,
+                                 STEPS_PARALLEL)
 import pyworkflow.utils as pwutils
 
 
-class EmpiarDownloader(ProtImportMovies, ProtImportMicrographs):
+class EmpiarDownloader(EMProtocol):
     """
     Download image sets from empiar
     """
     _label = 'empiar downloader'
     _outputClassName = 'SetOfMovies'
+    registerFiles = []
+
+    def __init__(self, **args):
+        EMProtocol.__init__(self, **args)
+        self.stepsExecutionMode = STEPS_PARALLEL
 
     # --------------- DEFINE param functions ---------------
     def _defineParams(self, form):
-        self._defineCommondParams()
         form.addSection(label='Entry')
         form.addParam('entryID', params.StringParam, default='10200',
                       label='EMPIAR ID',
                       important=True,
                       allowsNull=False,
                       help='EMPIAR entry ID')
-
-        form.addParam('entryType', params.EnumParam, default=0,
-                      choices=['Movies', 'Micrographs'],
-                      label='Type of data')
-        form.addParam('filesPattern', params.StringParam, default='*.tif',
-                      label='Pattern',
-                      help="Pattern of the files to be imported.\n\n"
-                           "The pattern can contain standard wildcards such as\n"
-                           "*, ?, etc, or special ones like ### to mark some\n"
-                           "digits in the filename as ID.\n\n"
-                           "NOTE: wildcards and special characters "
-                           "('*', '?', '#', ':', '%') cannot appear in the "
-                           "actual path.")
-
-        form.addSection('Streaming')
-        form.addParam('timeout', params.IntParam,
-                      default=43200,
-                      label='Time Out',
+        form.addParam('amountOfImages', params.IntParam,
+                      default=5,
+                      label='Amount of Images',
                       validators=[Positive],
                       help='Time that the protocol will be running expressed in seconds')
-        form.addParam('fileTimeout', params.IntParam, default=20,
-                      label="File timeout (secs)",
-                      help="Interval of time (in seconds) after which, if a file has "
-                           "not changed, we consider it as a new file. \n")
-
-    def _defineCommondParams(self):
-        self.importFrom = Integer(self.IMPORT_FROM_FILES)
-        self.dataStreaming = Boolean(True)
-        self.haveDataBeenPhaseFlipped = Boolean(False)
-        self.inputIndividualFrames = Boolean(False)
-        self.blacklistSet = String(None)
-        self.blacklistDateFrom = String()
-        self.blacklistDateTo = String()
-        self.blacklistFile = String()
-        self.copyFiles = False
-        self.dataStreaming = Boolean(True)
-        self.samplingRateMode = Integer(SAMPLING_FROM_IMAGE)
-        self.samplingRate = Float(1.0)
-        self.voltage = Float(300.0)
-        self.sphericalAberration = Float(2.7)
-        self.amplitudeContrast = Float(0.1)
-        self.magnification = Integer(50000)
-        self.doseInitial = Float(0)
-        self.dosePerFrame = Float(None)
-        self.flag = False
-        self._store(self)
+        form.addParallelSection(threads=2, mpi=1)
 
     # --------------- INSERT steps functions ----------------
 
     def _insertAllSteps(self):
-        self._insertFunctionStep('_downloadXmlFile')
-        self._insertFunctionStep('importImages')
+        self._insertFunctionStep('readXmlFileStep')
+        self._insertFunctionStep('downloadImagesStep')
+        self._insertFunctionStep('closeSetStep', wait=True)
     # --------------- STEPS functions -----------------------
 
-    def _downloadXmlFile(self):
+    def closeSetStep(self):
+        """
+        Close the set
+        """
+        self.outputMovies.setStreamState(SetOfMovies.STREAM_CLOSED)
+        self.outputMovies.write()
+        self._store()
+
+    def _stepsCheck(self):
+        # Input movie set can be loaded or None when checked for new inputs
+        # If None, we load it
+        depStepsList = []
+        if len(self.registerFiles) < self.amountOfImages.get():
+            for file in os.listdir(self._getExtraPath()):
+                if file not in self.registerFiles:
+                    self.registerFiles.append(file)
+                    lastSteps = self._insertFunctionStep('registerImageStep',
+                                                         file, prerequisites=[1])
+                    depStepsList.append(lastSteps)
+
+                if len(self.registerFiles) >= self.amountOfImages.get():
+                    self._steps[2].setStatus(STATUS_NEW)
+                    self._steps[2].addPrerequisites(*depStepsList)
+
+            self.updateSteps()
+
+    def registerImageStep(self, file):
+        """
+        """
+        newImage = Movie(location=self._getExtraPath(file))
+        newImage.setSamplingRate(self.samplingRate.get())
+        self._addMovieToOutput(newImage)
+
+    def _addMovieToOutput(self, movie):
+        """
+        Returns the output set if not available create an empty one
+        :return:
+        """
+        outputSet = None
+        if hasattr(self, 'outputMovies'):
+            outputSet = self.outputMovies
+            outputSet.append(movie)
+        else:
+            outputSet = SetOfMovies.create(self._getPath())
+            outputSet.setSamplingRate(self.samplingRate.get())
+            outputSet.setStreamState(outputSet.STREAM_OPEN)
+            outputSet.append(movie)
+            self._defineOutputs(outputMovies=outputSet)
+        outputSet.write()
+        self._store()
+
+    def readXmlFileStep(self):
         """
         Download file by file from a specific dataset from EMPIAR repository
         """
@@ -128,39 +143,24 @@ class EmpiarDownloader(ProtImportMovies, ProtImportMicrographs):
             self.releaseDate = String(content[empiarName]['release_date'])
             self.datasetSize = String(content[empiarName]['dataset_size'])
             self.empiarName = String(empiarName)
-            self.filesPath = String(self._getExtraPath())
-            self.dataFormat = String(content[empiarName]['data_format'])
+            self.samplingRate = Float(self.imageSets[0]['pixel_width'])
+            # self.dataFormat = String(content[empiarName]['data_format'])
 
-            if self.entryType.get() == 0:
-                self._outputClassName = 'SetOfMovies'
-            else:
-                self._outputClassName = 'SetOfMicrograph'
             self._store(self)
         except Exception as ex:
             self.setFailed(msg="There was an error downloading the EMPIAR raw "
-                               "images !!!")
+                               "images: %s!!!" %ex)
 
-    def importImages(self):
-        """
-        Import a set of images from EMPIAR repository
-        """
-        import time
-        threadImportImages = threading.Thread(name="loading_plugin",
-                                            target=self._downloadSetOfImages)
-        threadImportImages.start()
-        while not self.flag:
-            time.sleep(2)
-        self.importImagesStreamStep(self.filesPattern.get(), voltage=self.voltage,
-                                    sphericalAberration=self.sphericalAberration,
-                                    amplitudeContrast=self.amplitudeContrast,
-                                    magnification=self.magnification)
-
-    def _downloadSetOfImages(self):
+    def downloadImagesStep(self):
         """
         This method connect to EMPIAR repository and download a set of images
         into a specific directory
         """
         # Connection information
+
+        # import time
+        # time.sleep(60)
+        # return
         server = 'ftp.ebi.ac.uk'
         username = 'anonymous'
         password = ''
@@ -177,15 +177,17 @@ class EmpiarDownloader(ProtImportMovies, ProtImportMicrographs):
 
         # Loop through files and download each one individually into a specific
         # directory
+        imagesCount = 1
         for filename in ftp.nlst():
-            fileAbsPath = os.path.join(self.filesPath.get(), filename)
+            fileAbsPath = os.path.join(self._getTmpPath(), filename)
             if not os.path.exists(fileAbsPath):
                 fhandle = open(fileAbsPath, 'wb')
                 print(pwutils.yellowStr('Getting: ' + filename), flush=True)
                 ftp.retrbinary('RETR ' + filename, fhandle.write)
                 fhandle.close()
-                self.flag = True
-                if self.streamingHasFinished():
+                shutil.move(fileAbsPath, self._getExtraPath(filename))
+                imagesCount += 1
+                if imagesCount > self.amountOfImages.get():
                     break
         ftp.close()
 
@@ -203,12 +205,3 @@ class EmpiarDownloader(ProtImportMovies, ProtImportMicrographs):
     def _validate(self):
         errors = []
         return errors
-
-    def setSamplingRate(self, movieSet):
-        ProtImportMicBase.setSamplingRate(self, movieSet)
-        acq = movieSet.getAcquisition()
-        acq.setDoseInitial(self.doseInitial.get())
-        acq.setDosePerFrame(None)
-
-    def getCopyOrLink(self):
-        return self.ignoreCopy
