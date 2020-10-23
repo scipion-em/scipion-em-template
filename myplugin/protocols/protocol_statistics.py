@@ -33,7 +33,8 @@ This module will provide the traditional Hello world example
 from pyworkflow.protocol import Protocol, params, Integer
 from pyworkflow.utils import Message
 from pwem.objects.data import (SetOfParticles, Particle)
-
+import numpy as np
+from pwem.emlib.image import ImageHandler
 class ProtStatistics(Protocol):
     """
     This protocol will print hello world in the console
@@ -57,14 +58,44 @@ class ProtStatistics(Protocol):
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
-        #self._insertFunctionStep('greetingsStep')
+        self._insertFunctionStep('computeStatistics')
         self._insertFunctionStep('createOutputStep')
 
-    #def greetingsStep(self):
-    #    # say what the parameter says!!
-    #
-    #    for time in range(0, self.times.get()):
-    #        print(self.message)
+    def computeStatistics(self):
+        # get set of particles
+        setOfParticles = self.inputParticles.get()
+        # get dimensions
+        x, y, z = setOfParticles.getDim()
+        n = setOfParticles.getSize()
+        # alloc 2 np arrays
+        averageNP = np.zeros([x,y], dtype =np.float32)
+        squareNP = np.zeros([x,y], dtype =np.float32)
+        for particle in setOfParticles:
+            # read image
+            particleImage = ImageHandler().read(particle.getLocation())
+            matrix = particleImage.getData()
+            averageNP += matrix
+            squareNP += matrix * matrix
+        n = float(n)
+        averageNP /= n
+        particleImage.setData(averageNP)
+        particleImage.write(self._getExtraPath("average.mrc"))
+        squareNP -= n * (averageNP * averageNP)
+        squareNP /= n
+        particleImage.setData(squareNP)
+        particleImage.write(self._getExtraPath("std.mrc"))
+
+#TODO:
+#  1) make this program work
+#  2) add convert case
+#  3) viewer selecting fieldssampling rate and some mic parameter
+
+        #sums = sums + ((img - global_mean) ** 2) / len(images)
+
+        #for particle in setOfParticles:
+        #    # read image
+        #    matrix = ImageHandler().read(particle.getLocation()).getData()
+        #    averageNP.add(matrix)
 
     def createOutputStep(self):
         # Create two particle objects

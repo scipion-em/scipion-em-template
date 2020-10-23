@@ -29,6 +29,7 @@ from myplugin.protocols.protocol_hello_world import MyPluginPrefixHelloWorld
 from pyworkflow.tests import *
 from pwem.protocols import ProtImportParticles
 from myplugin.protocols import ProtStatistics
+from pwem.emlib.image import ImageHandler
 
 class TestStatisctics(BaseTest):
 
@@ -38,10 +39,9 @@ class TestStatisctics(BaseTest):
 
     def testCootFlexibleFitFromPDB(self):
         # import a stack of images
-        home = os.path.expanduser('~')
         # let us assume that the data files are
         # in $HOME/data
-        filesPath = os.path.join(home, 'data')
+        filesPath = os.path.dirname(__file__)
         args = {'importFrom': ProtImportParticles.IMPORT_FROM_FILES,
                 'filesPath': filesPath,
                 'filesPattern': 'proj.stk',
@@ -61,9 +61,14 @@ class TestStatisctics(BaseTest):
         protStatistics = self.newProtocol(ProtStatistics, **args)
         protStatistics.setObjLabel('compute statistics')
         self.launchProtocol(protStatistics)
-
+        # check that two Image objects has been created
         self.assertTrue(protStatistics.hasAttributeExt("average"))
         self.assertTrue(protStatistics.hasAttributeExt("std"))
-
-        # check that two outputs has been created
-        self.assertTrue(True)
+        # check that two images has been created
+        ih = ImageHandler()
+        fileName = protStatistics._getExtraPath("average.mrc")
+        print(os.path.abspath(fileName))
+        self.assertTrue(ih.existsLocation(fileName))
+        fileName = protStatistics._getExtraPath("std.mrc")
+        self.assertTrue(ih.existsLocation(fileName))
+        # add pixels(0,0) of 10 images and compare with average
