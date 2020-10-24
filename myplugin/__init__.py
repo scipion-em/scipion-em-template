@@ -24,7 +24,9 @@
 # *
 # **************************************************************************
 
+import os
 import pwem
+from pyworkflow.utils import Environ
 
 _logo = "icon.png"
 _references = ['you2019']

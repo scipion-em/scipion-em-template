@@ -4,3 +4,4 @@
 # Find documentation here: https://scipion-em.github.io/docs/docs/developer/creating-a-protocol
 # **************************************************************************
 from .protocol_hello_world import MyPluginPrefixHelloWorld
+from .protocol_run_myprogram import MyPluginPrefixMyProgram
