@@ -26,7 +26,7 @@
 
 import os
 import pwem
-from pyworkflow.utils import Environ
+from pyworkflow.utils import Environ, Config
 
 from .constants import *
 
@@ -44,21 +44,57 @@ class Plugin(pwem.Plugin):
     def _defineVariables(cls):
         cls._defineEmVar(MYPROGRAM_HOME, 'myprogram-1.0')
         cls._defineVar(MYPROGRAM, 'example_script.sh')
+        cls._defineVar(MYPROG_ENV_ACTIVATION, 'conda activate myprogenv-1.0')
 
     @classmethod
     def getEnviron(cls):
         """ Setup the environment variables needed to launch myProgram. """
         environ = Environ(os.environ)
+        if 'PYTHONPATH' in environ:
+            # this is required for python virtual env to work
+            del environ['PYTHONPATH']
         environ.update({'PATH': cls.getHome()}, position=Environ.BEGIN)
         return environ
 
     @classmethod
     def defineBinaries(cls, env):
+        installCmd = [cls.getCondaActivationCmd()]
+        # Create the environment
+        installCmd.append('conda create -y -n myprogenv-1.0 python=3;')
+        # Activate the new environment
+        installCmd.append('conda activate myprogenv-1.0;')
+        # Flag installation finished
+        installCmd.append('touch IS_INSTALLED;')
+
+        commands = [(" ".join(installCmd), 'IS_INSTALLED')]
+
         env.addPackage('myprogram', version=V1_0,
-                       tar='myprogram_v1.0.tgz',
+                       commands=commands,
+                       tar='void.tgz',
                        default=True)
 
     @classmethod
     def getProgram(cls):
         """ Return the program binary that will be used. """
-        return os.path.join(cls.getHome(), cls.getVar(MYPROGRAM))
+        program = '%s %s && %s' % (cls.getCondaActivationCmd(),
+                                   cls.getMyProgEnvActivation(),
+                                   cls.getVar(MYPROGRAM))
+        return program
+
+    @classmethod
+    def getDependencies(cls):
+        # try to get CONDA activation command
+        condaActivationCmd = cls.getCondaActivationCmd()
+        neededProgs = []
+        if not condaActivationCmd:
+            neededProgs.append('conda')
+
+        return neededProgs
+
+    @classmethod
+    def getMyProgEnvActivation(cls):
+        """ Remove the scipion home and activate the conda environment. """
+        activation = cls.getVar(MYPROG_ENV_ACTIVATION)
+        scipionHome = Config.SCIPION_HOME + os.path.sep
+
+        return activation.replace(scipionHome, "", 1)
