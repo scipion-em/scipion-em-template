@@ -28,9 +28,37 @@ import os
 import pwem
 from pyworkflow.utils import Environ
 
+from .constants import *
+
 _logo = "icon.png"
 _references = ['you2019']
 
 
 class Plugin(pwem.Plugin):
-    pass
+    _homeVar = MYPROGRAM_HOME
+    _pathVars = [MYPROGRAM_HOME]
+    _supportedVersions = [V1_0]
+    _url = "https://github.com/scipion-em/scipion-em-template"
+
+    @classmethod
+    def _defineVariables(cls):
+        cls._defineEmVar(MYPROGRAM_HOME, 'myprogram-1.0')
+        cls._defineVar(MYPROGRAM, 'example_script.sh')
+
+    @classmethod
+    def getEnviron(cls):
+        """ Setup the environment variables needed to launch myProgram. """
+        environ = Environ(os.environ)
+        environ.update({'PATH': cls.getHome()}, position=Environ.BEGIN)
+        return environ
+
+    @classmethod
+    def defineBinaries(cls, env):
+        env.addPackage('myprogram', version=V1_0,
+                       tar='myprogram_v1.0.tgz',
+                       default=True)
+
+    @classmethod
+    def getProgram(cls):
+        """ Return the program binary that will be used. """
+        return os.path.join(cls.getHome(), cls.getVar(MYPROGRAM))
