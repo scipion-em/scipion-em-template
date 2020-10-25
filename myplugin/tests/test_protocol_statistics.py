@@ -37,10 +37,8 @@ class TestStatisctics(BaseTest):
     def setUpClass(cls):
         setupTestProject(cls)
 
-    def testCootFlexibleFitFromPDB(self):
+    def testStatistics_01(self):
         # import a stack of images
-        # let us assume that the data files are
-        # in $HOME/data
         filesPath = os.path.dirname(__file__)
         args = {'importFrom': ProtImportParticles.IMPORT_FROM_FILES,
                 'filesPath': filesPath,
@@ -63,12 +61,11 @@ class TestStatisctics(BaseTest):
         self.launchProtocol(protStatistics)
         # check that two Image objects has been created
         self.assertTrue(protStatistics.hasAttributeExt("average"))
-        self.assertTrue(protStatistics.hasAttributeExt("std"))
+        self.assertTrue(protStatistics.hasAttributeExt("variance"))
         # check that two images has been created
         ih = ImageHandler()
         fileName = protStatistics._getExtraPath("average.mrc")
         print(os.path.abspath(fileName))
         self.assertTrue(ih.existsLocation(fileName))
-        fileName = protStatistics._getExtraPath("std.mrc")
+        fileName = protStatistics._getExtraPath("variance.mrc")
         self.assertTrue(ih.existsLocation(fileName))
-        # add pixels(0,0) of 10 images and compare with average
