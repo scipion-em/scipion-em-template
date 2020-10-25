@@ -5,3 +5,4 @@
 # **************************************************************************
 from .protocol_hello_world import MyPluginPrefixHelloWorld
 from .protocol_statistics import ProtStatistics
+from .protocol_thumbnail import ProtThumbnail

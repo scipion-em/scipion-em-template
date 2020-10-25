@@ -1,1 +1,2 @@
 from .test_protocol_statistics import TestStatisctics
+from .test_protocol_thumbnail import TestThumbnail
