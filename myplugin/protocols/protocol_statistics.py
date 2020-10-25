@@ -30,15 +30,16 @@
 Describe your python module here:
 This module will provide the traditional Hello world example
 """
-from pyworkflow.protocol import Protocol, params, Integer
+from pyworkflow.protocol import params
+from pwem.protocols import EMProtocol
 from pyworkflow.utils import Message
 from pwem.objects.data import (SetOfParticles, Particle)
 import numpy as np
 from pwem.emlib.image import ImageHandler
-class ProtStatistics(Protocol):
+class ProtStatistics(EMProtocol):
     """
-    This protocol will print hello world in the console
-    IMPORTANT: Classes names should be unique, better prefix them
+    This protocol will compute the average
+    and variance of a stack of images
     """
     _label = 'Statistics'
 
@@ -62,48 +63,21 @@ class ProtStatistics(Protocol):
         self._insertFunctionStep('createOutputStep')
 
     def computeStatistics(self):
-        # get set of particles
-        setOfParticles = self.inputParticles.get()
-        # get dimensions
-        x, y, z = setOfParticles.getDim()
-        n = setOfParticles.getSize()
-        # alloc 2 np arrays
-        averageNP = np.zeros([x,y], dtype =np.float32)
-        squareNP = np.zeros([x,y], dtype =np.float32)
-        for particle in setOfParticles:
-            # read image
-            particleImage = ImageHandler().read(particle.getLocation())
-            matrix = particleImage.getData()
-            averageNP += matrix
-            squareNP += matrix * matrix
-        n = float(n)
-        averageNP /= n
-        particleImage.setData(averageNP)
-        particleImage.write(self._getExtraPath("average.mrc"))
-        squareNP -= n * (averageNP * averageNP)
-        squareNP /= n
-        particleImage.setData(squareNP)
-        particleImage.write(self._getExtraPath("std.mrc"))
-
-#TODO:
-#  1) make this program work
-#  2) add convert case
-#  3) viewer selecting fieldssampling rate and some mic parameter
-
-        #sums = sums + ((img - global_mean) ** 2) / len(images)
-
-        #for particle in setOfParticles:
-        #    # read image
-        #    matrix = ImageHandler().read(particle.getLocation()).getData()
-        #    averageNP.add(matrix)
+        """Your Code goes here"""
+        pass
 
     def createOutputStep(self):
         # Create two particle objects
         # so far empty ones
+        self.sampling = self.inputParticles.get().getSamplingRate()
         average = Particle()
-        std = Particle()
+        average.setFileName(self._getExtraPath("average.mrc"))
+        average.setSamplingRate(self.sampling)
+        variance = Particle()
+        variance.setFileName(self._getExtraPath("variance.mrc"))
+        variance.setSamplingRate(self.sampling)
         self._defineOutputs(average=average)
-        self._defineOutputs(std=std)
+        self._defineOutputs(variance=variance)
 
     # --------------------------- INFO functions -----------------------------------
     def _summary(self):
@@ -111,7 +85,7 @@ class ProtStatistics(Protocol):
         summary = []
 
         if self.isFinished():
-            summary.append("This protocol has printed *%s* %i times." % (self.message, self.times))
+            summary.append("average and variance files created")
         return summary
 
     def _methods(self):
