@@ -63,13 +63,33 @@ class ProtStatistics(EMProtocol):
         self._insertFunctionStep('createOutputStep')
 
     def computeStatistics(self):
-        """Your Code goes here"""
-        pass
+        # get set of particles
+        setOfParticles = self.inputParticles.get()
+        # get dimensions
+        x, y, z = setOfParticles.getDim()
+        n = setOfParticles.getSize()
+        # alloc 2 np arrays
+        averageNP = np.zeros([x,y], dtype =np.float32)
+        squareNP = np.zeros([x,y], dtype =np.float32)
+        for particle in setOfParticles:
+            # read image
+            particleImage = ImageHandler().read(particle.getLocation())
+            matrix = particleImage.getData()
+            averageNP += matrix
+            squareNP += matrix * matrix
+        n = float(n)
+        averageNP /= n
+        particleImage.setData(averageNP)
+        particleImage.write(self._getExtraPath("average.mrc"))
+        squareNP -= n * (averageNP * averageNP)
+        squareNP /= n
+        particleImage.setData(squareNP)
+        particleImage.write(self._getExtraPath("variance.mrc"))
+        self.sampling = setOfParticles.getSamplingRate()
 
     def createOutputStep(self):
         # Create two particle objects
         # so far empty ones
-        self.sampling = self.inputParticles.get().getSamplingRate()
         average = Particle()
         average.setFileName(self._getExtraPath("average.mrc"))
         average.setSamplingRate(self.sampling)
@@ -85,7 +105,7 @@ class ProtStatistics(EMProtocol):
         summary = []
 
         if self.isFinished():
-            summary.append("average and variance files created")
+          summary.append("average and variance files created")
         return summary
 
     def _methods(self):
