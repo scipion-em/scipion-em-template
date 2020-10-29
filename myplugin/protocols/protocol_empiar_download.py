@@ -6,8 +6,7 @@ import shutil
 
 from pwem.objects import Movie, SetOfMovies, Float
 from pwem.protocols import EMProtocol
-from pyworkflow.protocol import (params, Positive, String, STATUS_NEW,
-                                 STEPS_PARALLEL)
+from pyworkflow.protocol import params, String, STATUS_NEW, STEPS_PARALLEL
 import pyworkflow.utils as pwutils
 
 
@@ -17,8 +16,8 @@ class EmpiarDownloader(EMProtocol):
     """
     _label = 'empiar downloader'
     _outputClassName = 'SetOfMovies'  # Defining the output class
-    registeredFiles = []  # saves the name of the movies that have been already registered
-    _stepsCheckSecs = 3  # time in seconds to check the steps
+    registeredFiles = []              # saves the name of the movies that have been already registered
+    _stepsCheckSecs = 3               # time in seconds to check the steps
 
     def __init__(self, **args):
         EMProtocol.__init__(self, **args)
@@ -37,22 +36,20 @@ class EmpiarDownloader(EMProtocol):
         # name-->amountOfImages, Integer param , default to 1, choose the label and the help
         # it has to be positive (use "validators" argument, it expects a list of
         # pyworkflow.protocol.params.Validator, look for the Positive Validator)
-        form.addParam("amountOfImages", params.IntParam, label="Amount of files", default=1,
+        form.addParam("amountOfImages", params.IntParam, label="Number of files", default=1,
                       help="Number of files to download", validators=[params.Positive])
 
         # Parallel section defining the number of threads and mpi to use
         form.addParallelSection(threads=3, mpi=1)
 
     def _insertAllSteps(self):
-
         self.readXmlFile = self._insertFunctionStep('readXmlFileStep')  # read the dataset xml file from EMPIAR
-        self.downloadImages = self._insertFunctionStep('downloadImagesStep')  # download the movies and register them in pararell
+        self.downloadImages = self._insertFunctionStep('downloadImagesStep')  # download the movies and register them in parallel
         self.closeSet = self._insertFunctionStep('closeSetStep', wait=True)  # close the registered dataset set
 
     def downloadImagesStep(self):
-
-        # Call the method provided bellow.
-        # Make the download happen on the tmp folder of the protocol and the final folder to be the extra folder
+        # Call the method provided below
+        # Make the download happen in the tmp folder of the protocol and the final folder to be the extra folder
         downloadImagesFromEmpiar(self.entryId.get(),self._getTmpPath(),
                                  self._getExtraPath(),limit=self.amountOfImages.get())
 
@@ -63,7 +60,7 @@ class EmpiarDownloader(EMProtocol):
         # Create a Movie object having file as the location: see pwem.objects.data.Movie()
         newImage = Movie(location=self._getExtraPath(file))
 
-        # Set the movie sampling rate with the sampling rate obtained in the readXmlFromEmpiar step
+        # Set the movie sampling rate to the sampling rate obtained in the readXmlFromEmpiar step
         newImage.setSamplingRate(self.samplingRate.get())
 
         # Pass the movie to _addMovieToOutput
@@ -72,8 +69,7 @@ class EmpiarDownloader(EMProtocol):
     def _stepsCheck(self):
         """ Adds as many registerImageStep as new files appears in the extra folder
         """
-
-        # Declare a list to keep all new steps added this call (newSteps)
+        # Declare a list to keep all new steps added (newSteps)
         newSteps = []
 
         # If the size of registeredFiles (object level attribute) is < amountOfImages (parameter)
@@ -82,13 +78,13 @@ class EmpiarDownloader(EMProtocol):
             # loop through the files in the extra path
             for file in os.listdir(self._getExtraPath()):
 
-                # if the file is not annotated our registeredFiles list
+                # if the file is not in our registeredFiles list
                 if file not in self.registeredFiles:
 
                     # Append it to registeredFiles list
                     self.registeredFiles.append(file)
 
-                    # Create a new step to register the new file (item of this loop)
+                    # Create a new step to register the new file
                     # use _insertFunctionStep with registerImageStep, file, and
                     # self.readXmlFile as a prerequisite
                     # and store the returned value in a variable (newStep)
@@ -98,20 +94,19 @@ class EmpiarDownloader(EMProtocol):
                     newSteps.append(newStep)
 
         # Let's update the closeSetStep
-        # Get the closeSetStep store it in closeSetStep
-        # Hint: the list of steps are accessible with self._steps[stepId-1] --> what we stored in insertAllSteps
+        # Get the closeSetStep
+        # Hint: any step is accessible with self._steps[stepId-1] --> what we stored in insertAllSteps
         closeSetStep = self._steps[self.closeSet-1]
 
-        # Add the new steps as prerequisites for the closeSetStep (to keep a coherent Step tree)
-        # Use the addPrerequisites method of the closeSetStep.
-        # Be sure you pass the list as parameter *newSteps
+        # Add the new steps as prerequisites for the closeSetStep
+        # Use the addPrerequisites method of the closeSetStep
+        # Be sure you pass the list as *newSteps
         closeSetStep.addPrerequisites(*newSteps)
 
-        # If we have reached the limit of files (amountOfImages) compared with registeredFiles
+        # If we have reached the limit of files (amountOfImages) compared to registeredFiles
         if len(self.registeredFiles) >= self.amountOfImages.get():
 
-            # Free up the waiting closeSet step by setting the Step.setStatus(STATUS_NEW)
-            # Not waiting anymore
+            # Free the waiting closeSet step by setting the Step.setStatus(STATUS_NEW)
             closeSetStep.setStatus(STATUS_NEW)
 
         # Update the protocol steps using updateSteps()
@@ -121,9 +116,8 @@ class EmpiarDownloader(EMProtocol):
         """
         Returns the output set if not available create an empty one
         """
-
         # Do we have the attribute "outputMovies"?
-        if hasattr(self, 'outputMovies'): # the output is defined
+        if hasattr(self, 'outputMovies'):  # the output is defined
 
             # Append the "movie" passed to the already existing output
             self.outputMovies.append(movie)
@@ -138,7 +132,7 @@ class EmpiarDownloader(EMProtocol):
             # NOTE: Scipion objects are wrappers to actual python types. To get the python value use .get() method
             outputSet.setSamplingRate(self.samplingRate.get())
 
-            # set the set .streamState to open (set.setStreamState). Constant for the state is at Set.STREAM_OPEN.
+            # set the set's .streamState to open (set.setStreamState). Constant for the state is Set.STREAM_OPEN.
             outputSet.setStreamState(SetOfMovies.STREAM_OPEN)
 
             # append the movie to the new set just created
@@ -153,10 +147,8 @@ class EmpiarDownloader(EMProtocol):
         # Save the protocol with the new  status: protocol._store() --> run.db
         self._store()
 
-
     def readXmlFileStep(self):
-
-        # Call the method provided bellow to get some data from the empiar xml
+        # Call the method provided below to get some data from the empiar xml
         title, samplingRate = readXmlFromEmpiar(self.entryId.get())
 
         # Store returned values as "persistent" attributes: String, Integer, Float
@@ -179,7 +171,6 @@ class EmpiarDownloader(EMProtocol):
         # Save the protocol: Hint: _store()
         self._store()
 
-
     def _summary(self):
         summary = []
 
@@ -194,8 +185,7 @@ class EmpiarDownloader(EMProtocol):
         return summary
 
 
-
-##### Helper methods
+# Helper methods #########################################################
 
 def readXmlFromEmpiar(entryId):
         """
@@ -220,6 +210,7 @@ def readXmlFromEmpiar(entryId):
 
         # You may want to return more elements
         return title, samplingRate
+
 
 def downloadImagesFromEmpiar(entryId, downloadFolder, finalFolder, limit=5):
     """
