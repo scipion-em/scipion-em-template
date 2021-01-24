@@ -36,6 +36,6 @@ setup(
     install_requires=[requirements],
     entry_points={'pyworkflow.plugin': 'myplugin = myplugin'},
     package_data={  # Optional
-       'myplugin': ['icon.png', 'protocols.conf'],
+       'myplugin': ['protocols.conf'],
     }
 )
