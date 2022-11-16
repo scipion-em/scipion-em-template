@@ -1,95 +1,36 @@
 =======================
-Scipion template plugin
+Scipion-em-smarscope
 =======================
 
-This is a template plugin for **scipion**
+Plugin to manage the interaction with the SmartScope program.
 
-==========================
-Steps to adapt this plugin
-==========================
+Installation
+------------
+You will need to install SmartScope previous the plugin installation
+https://docs.smartscope.org/
 
-IMPORTANT: To simplify the instructions all the commands would refer to an hypothetical new plugin name called "coolem".
-Note that you must replace "coolem" by your plugin name.
+a) Stable version
 
-**Clone it:**
+   .. code-block::
 
-.. code-block::
+      scipion installp -p scipion-em-smartscope
 
-    git clone git@github.com:scipion-em/scipion-em-template.git scipion-em-coolem
+b) Developer's version
 
-**Reset the git repo**
+   * download repository
 
-.. code-block::
+   .. code-block::
 
-    cd scipion-em-coolem
-    rm -rf .git
-    git init
+      git clone -b devel https://github.com/scipion-em/scipion-em-smartscope.git
 
-**Empty CHANGES.txt**
+   * install
 
-.. code-block::
+   .. code-block::
 
-    rm CHANGES.txt && touch CHANGES.txt
-
-**Rename "myplugin" to coolem (IDE might help here)**
-
-.. code-block::
-
-    mv myplugin coolem
-
-**Tidy up imports**
-
-Tip 1: IDE refactrization should rename at once the classes and the imports
-Tip 2: Search in your IDE for "myplugin" and replace by *"coolem"*
-
-coolem/protocols/protocol_hello_world.py:
- class MyPluginPrefixHelloWorld --> class CoolemPrefixHelloWorld
-
-coolem/protocol/__init__.py:
- from .protocol_hello_world import MyPluginPrefixHelloWorld --> from .protocol_hello_world import CoolemPrefixHelloWorld
-
-coolem/wizards/wizard_hello_world.py:
- _targets = [(MyPluginPrefixHelloWorld, ['message'])]  -->     _targets = [(CoolemPrefixHelloWorld, ['message'])]
- class MyPluginPrefixHelloWorldWizard --> class CoolemPrefixHelloWorldWizard
-
-coolem/wizards/__init__.py:
- from .wizard_hello_world import MyPluginPrefixHelloWorldWizard  --> from .wizard_hello_world import CoolemPrefixHelloWorldWizard
-
-protcocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
+      scipion installp -p /path/to/scipion-em-smartscope--devel
 
 
-setup.py:
- update almost all values: name, description, ...
 
- be sure to update package data
-.. code-block::
-
-    package_data={  # Optional
-       'coolem': ['icon.png', 'protocols.conf'],
-    }
-
-  and the entry point
-.. code-block::
-
-    entry_points={
-        'pyworkflow.plugin': 'coolem = coolem'
-    }
-
-**Install the plugin in devel mode**
-
-.. code-block::
-
-    scipion3 installp -p /home/me/scipion-em-coolem --devel
-
-TIP: If installation fails, you can access pip options like:
-
-.. code-block::
-
-    scipion3 python -m pip ... (list, install, uninstall)
-
-**Customize it**
-    replace icon.png with your logo.
-    update the bibtex.py with your reference.
-
-**Get rid of this content and keep the readme informative**
-
+Protocols
+---------
+protocol_import_atlas

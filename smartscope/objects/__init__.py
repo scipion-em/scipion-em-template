@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
 # **************************************************************************
 # *
-# * Authors:     you (you@yourinstitution.email)
+# * Authors: Daniel Marchan (da.marchan@cnb.csic.es)
+#            Alberto Garcia Mena   (alberto.garcia@cnb.csic.es)
 # *
-# * your institution
+# *
+# * Unidad de  Bioinformatica of Centro Nacional de Biotecnologia , CSIC
 # *
 # * This program is free software; you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
-# * the Free Software Foundation; either version 2 of the License, or
+# * the Free Software Foundation; either version 3 of the License, or
 # * (at your option) any later version.
 # *
 # * This program is distributed in the hope that it will be useful,
@@ -25,19 +26,4 @@
 # *
 # **************************************************************************
 
-"""
-@article{you2019,
-title = "Title of your paper ",
-journal = "...",
-volume = "...",
-number = ".",
-pages = "1 - 6",
-year = "2019",
-issn = "0000-1111",
-doi = "http://dx.doi.org/xxxxx/xxxxx",
-url = "http://www.url",
-author = "you and your team",
-keywords = "Single particle analysis Tomography",
-}
-
-"""
+from .data import *

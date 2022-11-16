@@ -4,4 +4,4 @@
 # Find documentation here: https://scipion-em.github.io/docs/docs/developer/creating-a-wizard
 # **************************************************************************
 
-from .wizard_hello_world import MyPluginPrefixHelloWorldWizard
+from .wizard_hello_world import smartscopeWizard

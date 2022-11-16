@@ -24,18 +24,17 @@ with open('requirements.txt') as f:
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='scipion-em-template',  # Required
+    name='scipion-em-smartscope',  # Required
     version='0.1',  # Required
-    description='Scipion plugin template.',  # Required
+    description='Plugin to manage Smartscope from Scipion',  # Required
     long_description=long_description,  # Optional
     url='https://github.com/scipion-em/scipion-em-myplugin',  # Optional
-    author='you',  # Optional
-    author_email='you@yourinstitution.email',  # Optional
-    keywords='scipion cryoem imageprocessing scipion-3.0',  # Optional
+    author='Daniel Marchan and Alberto Garcia Mena',  # Optional
+    author_email='da.marchan@cnb.csic.es, alberto.garcia@cnb.csic.es',  # Optional
+    keywords='scipion cryoem imageprocessing scipion-3.0 screening smartscope',  # Optional
     packages=find_packages(),
     install_requires=[requirements],
-    entry_points={'pyworkflow.plugin': 'myplugin = myplugin'},
-    package_data={  # Optional
-       'myplugin': ['icon.png', 'protocols.conf'],
+    entry_points={'pyworkflow.plugin': 'smartscope = smartscope'},
+    package_data={ 'smartscope': ['icon.png', 'protocols.conf'],
     }
 )

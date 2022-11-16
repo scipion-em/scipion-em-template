@@ -34,7 +34,7 @@ from pyworkflow.protocol import Protocol, params, Integer
 from pyworkflow.utils import Message
 
 
-class MyPluginPrefixHelloWorld(Protocol):
+class smartscopeConnection(Protocol):
     """
     This protocol will print hello world in the console
     IMPORTANT: Classes names should be unique, better prefix them

@@ -1,11 +1,11 @@
 from pyworkflow.gui import ListTreeProviderString, dialog
 from pyworkflow.object import String
 from pyworkflow.wizard import Wizard
-from myplugin.protocols import MyPluginPrefixHelloWorld
+from smartscope.protocols import smartscopeConnection
 
-class MyPluginPrefixHelloWorldWizard(Wizard):
+class smartscopeWizard(Wizard):
     # Dictionary to target protocol parameters
-    _targets = [(MyPluginPrefixHelloWorld, ['message'])]
+    _targets = [(smartscopeConnection, ['message'])]
 
     def show(self, form, *params):
 
