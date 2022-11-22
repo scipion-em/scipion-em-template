@@ -37,8 +37,6 @@ Note that you must replace "coolem" by your plugin name.
 
     mv myplugin coolem
     
-    mv scipion-em-template scipion-em-coolem
-
 
 **Tidy up imports**
 
@@ -89,12 +87,15 @@ If installation fails, you can access pip options like:
 
 **Customize it**
 
-Replace icon.png with your logo and pdate the bibtex.py with your reference.
+Replace icon.png with your logo and update the bibtex.py with your reference.
 
 Get rid of this content and keep the readme informative
 
 
 **Repository**
 
-To create the GitHub repository, please contact the team managers.
+To create the repository, following those guide depending the platform:
 
+- GitHub: https://docs.github.com/en/get-started/quickstart/create-a-repo
+- GitLab https://docs.gitlab.com/ee/user/project/repository/
+- Bitbucket https://support.atlassian.com/bitbucket-cloud/docs/create-a-git-repository/
