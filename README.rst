@@ -31,7 +31,7 @@ Note that you must replace "coolem" by your plugin name.
 
     rm CHANGES.txt && touch CHANGES.txt
 
-**Rename "myplugin" to coolem and scipion-em-template to scipion-em-coolem**
+**Rename "myplugin" to coolem**
 
 .. code-block::
 
