@@ -31,37 +31,34 @@ Note that you must replace "coolem" by your plugin name.
 
     rm CHANGES.txt && touch CHANGES.txt
 
-**Rename "myplugin" to coolem (IDE might help here)**
+**Rename "myplugin" to coolem**
 
 .. code-block::
 
     mv myplugin coolem
+    
 
 **Tidy up imports**
 
-Tip 1: IDE refactrization should rename at once the classes and the imports
-Tip 2: Search in your IDE for "myplugin" and replace by *"coolem"*
+ IDE refactrization should rename at once the classes and the imports. Search in your IDE for "myplugin" and replace by *"coolem"*
 
-coolem/protocols/protocol_hello_world.py:
+- coolem/protocols/protocol_hello_world.py:
  class MyPluginPrefixHelloWorld --> class CoolemPrefixHelloWorld
 
-coolem/protocol/__init__.py:
+- coolem/protocol/__init__.py:
  from .protocol_hello_world import MyPluginPrefixHelloWorld --> from .protocol_hello_world import CoolemPrefixHelloWorld
 
-coolem/wizards/wizard_hello_world.py:
+- coolem/wizards/wizard_hello_world.py:
  _targets = [(MyPluginPrefixHelloWorld, ['message'])]  -->     _targets = [(CoolemPrefixHelloWorld, ['message'])]
  class MyPluginPrefixHelloWorldWizard --> class CoolemPrefixHelloWorldWizard
 
-coolem/wizards/__init__.py:
+- coolem/wizards/__init__.py:
  from .wizard_hello_world import MyPluginPrefixHelloWorldWizard  --> from .wizard_hello_world import CoolemPrefixHelloWorldWizard
 
-protcocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
+- protcocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
 
 
-setup.py:
- update almost all values: name, description, ...
-
- be sure to update package data
+- setup.py: Update almost all values: name, description, ... Be sure to update package data
 .. code-block::
 
     package_data={  # Optional
@@ -81,15 +78,24 @@ setup.py:
 
     scipion3 installp -p /home/me/scipion-em-coolem --devel
 
-TIP: If installation fails, you can access pip options like:
+If installation fails, you can access pip options like:
 
 .. code-block::
 
     scipion3 python -m pip ... (list, install, uninstall)
+    
 
 **Customize it**
-    replace icon.png with your logo.
-    update the bibtex.py with your reference.
 
-**Get rid of this content and keep the readme informative**
+Replace icon.png with your logo and update the bibtex.py with your reference.
 
+Get rid of this content and keep the readme informative
+
+
+**Repository**
+
+To create the repository, following those guide depending the platform:
+
+- GitHub: https://docs.github.com/en/get-started/quickstart/create-a-repo
+- GitLab https://docs.gitlab.com/ee/user/project/repository/
+- Bitbucket https://support.atlassian.com/bitbucket-cloud/docs/create-a-git-repository/
