@@ -24,11 +24,47 @@
 # *
 # **************************************************************************
 
+import os
+import pyworkflow.utils as pwutils
 import pwem
 
+from myplugin.constants import *
+
+__version__ = "0.1"  # plugin version
 _logo = "icon.png"
 _references = ['you2019']
 
 
 class Plugin(pwem.Plugin):
-    pass
+    _url = "https://github.com/scipion-em/scipion-em-template"
+    _supportedVersions = [V1]  # binary version
+
+    @classmethod
+    def _defineVariables(cls):
+        cls._defineVar(MYPLUGIN_BINARY, "program")
+        cls._defineEmVar(MYPLUGIN_HOME, f"myplugin-{V1}")
+
+    @classmethod
+    def getEnviron(cls):
+        """ Setup the environment variables needed to launch my program. """
+        environ = pwutils.Environ(os.environ)
+
+        # ...
+
+        return environ
+
+    @classmethod
+    def getDependencies(cls):
+        """ Return a list of dependencies. """
+        neededProgs = []
+
+        return neededProgs
+
+    @classmethod
+    def defineBinaries(cls, env):
+        installCmds = [("make -j 4", "")]  # replace the target "" with e.g. "bin/myprogram"
+        env.addPackage('myplugin', version=V1,
+                       tar='void.tgz',
+                       commands=installCmds,
+                       neededProgs=cls.getDependencies(),
+                       default=True)

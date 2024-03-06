@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # **************************************************************************
 # *
 # * Authors:     you (you@yourinstitution.email)
@@ -25,19 +24,7 @@
 # *
 # **************************************************************************
 
-"""
-@article{you2019,
-title = "Title of your paper ",
-journal = "...",
-volume = "...",
-number = ".",
-pages = "1 - 6",
-year = "2019",
-issn = "0000-1111",
-doi = "https://dx.doi.org/xxxxx/xxxxx",
-url = "https://www.url",
-author = "you and your team",
-keywords = "Single particle analysis Tomography",
-}
+V1 = "1.0"
 
-"""
+MYPLUGIN_BINARY = "MYPLUGIN_BINARY"
+MYPLUGIN_HOME = "MYPLUGIN_HOME"

@@ -15,7 +15,7 @@ Note that you must replace "coolem" by your plugin name.
 
 .. code-block::
 
-    git clone git@github.com:scipion-em/scipion-em-template.git scipion-em-coolem
+    git clone https://github.com/scipion-em/scipion-em-template.git scipion-em-coolem
 
 **Reset the git repo**
 
@@ -40,7 +40,7 @@ Note that you must replace "coolem" by your plugin name.
 
 **Tidy up imports**
 
- IDE refactrization should rename at once the classes and the imports. Search in your IDE for "myplugin" and replace by *"coolem"*
+ IDE refactorization should rename at once the classes and the imports. Search in your IDE for "myplugin" and replace by *"coolem"*
 
 - coolem/protocols/protocol_hello_world.py:
  class MyPluginPrefixHelloWorld --> class CoolemPrefixHelloWorld
@@ -55,7 +55,7 @@ Note that you must replace "coolem" by your plugin name.
 - coolem/wizards/__init__.py:
  from .wizard_hello_world import MyPluginPrefixHelloWorldWizard  --> from .wizard_hello_world import CoolemPrefixHelloWorldWizard
 
-- protcocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
+- protocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
 
 
 - setup.py: Update almost all values: name, description, ... Be sure to update package data

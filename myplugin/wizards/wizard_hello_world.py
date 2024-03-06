@@ -1,14 +1,15 @@
 from pyworkflow.gui import ListTreeProviderString, dialog
 from pyworkflow.object import String
 from pyworkflow.wizard import Wizard
+
 from myplugin.protocols import MyPluginPrefixHelloWorld
+
 
 class MyPluginPrefixHelloWorldWizard(Wizard):
     # Dictionary to target protocol parameters
     _targets = [(MyPluginPrefixHelloWorld, ['message'])]
 
     def show(self, form, *params):
-
         # This are the greetings:
         greetings = [String("Hello world"), String("Hola mundo"),
                      String("Bonjour le monde"), String("Hallo Welt"),
