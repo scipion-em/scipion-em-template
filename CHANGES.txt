@@ -1,4 +1,4 @@
-
+6-Mar-2024: update the skeleton
 
 1-October-2019 - (tagged with 1.skeleton)
     Just a python package, should work with "scipion installp -p /home/you/scipion-em-template/ --devel

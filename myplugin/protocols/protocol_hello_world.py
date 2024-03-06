@@ -32,6 +32,7 @@ This module will provide the traditional Hello world example
 """
 from enum import Enum
 
+from pyworkflow.constants import BETA
 import pyworkflow.protocol.params as params
 from pyworkflow.utils import Message
 from pyworkflow.object import Integer
@@ -48,6 +49,7 @@ class MyPluginPrefixHelloWorld(EMProtocol):
     IMPORTANT: Classes names should be unique, better prefix them
     """
     _label = 'Hello world'
+    _devStatus = BETA
     _possibleOutputs = outputs
 
     # -------------------------- DEFINE param functions ----------------------
