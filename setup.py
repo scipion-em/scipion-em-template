@@ -11,6 +11,8 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+from myplugin import __version__
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -25,15 +27,24 @@ with open('requirements.txt') as f:
 
 setup(
     name='scipion-em-template',  # Required
-    version='0.1',  # Required
+    version=__version__,  # Required
     description='Scipion plugin template.',  # Required
     long_description=long_description,  # Optional
     url='https://github.com/scipion-em/scipion-em-myplugin',  # Optional
     author='you',  # Optional
     author_email='you@yourinstitution.email',  # Optional
     keywords='scipion cryoem imageprocessing scipion-3.0',  # Optional
+    classifiers=[  # Optional
+        'Development Status :: 3 - Alpha',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Programming Language :: Python :: 3'
+    ],
     packages=find_packages(),
     install_requires=[requirements],
+    project_urls={  # Optional
+        'Bug Reports': 'https://github.com/scipion-em/scipion-em-template/issues',
+        'Source': 'https://github.com/scipion-em/scipion-em-template/',
+    },
     entry_points={'pyworkflow.plugin': 'myplugin = myplugin'},
     package_data={  # Optional
        'myplugin': ['icon.png', 'protocols.conf'],
