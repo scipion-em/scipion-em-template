@@ -81,8 +81,8 @@ class MyPluginPrefixHelloWorld(EMProtocol):
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
-        self._insertFunctionStep(self.greetingsStep)
-        self._insertFunctionStep(self.createOutputStep)
+        self._insertFunctionStep(self.greetingsStep, needsGPU=False)
+        self._insertFunctionStep(self.createOutputStep, needsGPU=False)
 
     def greetingsStep(self):
         # say what the parameter says!!
