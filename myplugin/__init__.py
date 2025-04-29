@@ -36,6 +36,8 @@ _references = ['you2019']
 
 
 class Plugin(pwem.Plugin):
+    _homeVar = MYPLUGIN_HOME
+    _pathVars = [MYPLUGIN_HOME]
     _url = "https://github.com/scipion-em/scipion-em-template"
     _supportedVersions = [V1]  # binary version
 
