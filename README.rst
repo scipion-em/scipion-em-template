@@ -58,6 +58,14 @@ Note that you must replace "coolem" by your plugin name.
 - protocols.conf: rename MyPluginPrefixHelloWorld --> CoolemPrefixHelloWorld
 
 
+- If you want to change the name of the protocol:
+  
+  - coolem/protocols/protocol_hello_world --> coolem/protocols/protocol_coolem
+
+  - coolem/protocol/__init__.py:
+ from .protocol_hello_world import MyPluginPrefixHelloWorld --> from .protocol_coolem import CoolemPrefixHelloWorld
+
+
 - setup.py: Update almost all values: name, description, ... Be sure to update package data
 .. code-block::
 
@@ -71,6 +79,7 @@ Note that you must replace "coolem" by your plugin name.
     entry_points={
         'pyworkflow.plugin': 'coolem = coolem'
     }
+
 
 **Install the plugin in devel mode**
 
